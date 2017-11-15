@@ -24,18 +24,19 @@ function Stepper({
   circleTop, titleTop, completeOpacity, activeOpacity, defaultOpacity,
   completeTitleOpacity, activeTitleOpacity, defaultTitleOpacity, barStyle,
   defaultBorderColor, completeBorderColor, activeBorderColor, defaultBorderStyle,
-  completeBorderStyle, activeBorderStyle, defaultBarColor, completeBarColor
+  completeBorderStyle, activeBorderStyle, defaultBarColor, completeBarColor, showStepNumber,
+  barHeight, handleCircleClick,
 }) {
   return (
-    <div style={ styles.root }>
-      <div style={ styles.stepper }>
-        { steps.map((step, index) => (
+    <div style={styles.root}>
+      <div style={styles.stepper}>
+        {steps.map((step, index) => (
           <Step
-            key={index}
+            key={index}  // eslint-disable-line react/no-array-index-key
             width={100 / steps.length}
             title={step.title}
             href={step.href}
-            onClick={step.onClick}
+            onClick={handleCircleClick}
             active={index === activeStep}
             completed={index < activeStep}
             first={index === 0}
@@ -68,8 +69,11 @@ function Stepper({
             activeBorderStyle={activeBorderStyle}
             defaultBarColor={defaultBarColor}
             completeBarColor={completeBarColor}
+            showStepNumber={showStepNumber}
+            barHeight={barHeight}
+            handleCircleClick={handleCircleClick}
           />
-        )) }
+        ))}
       </div>
     </div>
   );
@@ -109,6 +113,9 @@ Stepper.propTypes = {
   defaultBorderStyle: PropTypes.string,
   completeBorderStyle: PropTypes.string,
   activeBorderStyle: PropTypes.string,
+  barHeight: PropTypes.number,
+  showStepNumber: PropTypes.bool,
+  handleCircleClick: PropTypes.func,
 };
 
 export default Stepper;
