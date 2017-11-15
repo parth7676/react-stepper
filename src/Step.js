@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 
+/* eslint-disable */
 export default class Step extends Component {
   constructor() {
     super();
@@ -15,7 +16,7 @@ export default class Step extends Component {
       circleTop, titleTop, width, completeOpacity, activeOpacity, defaultOpacity,
       completeTitleOpacity, activeTitleOpacity, defaultTitleOpacity, barStyle, defaultBarColor,
       completeBarColor, defaultBorderColor, completeBorderColor, activeBorderColor,
-      defaultBorderStyle,completeBorderStyle, activeBorderStyle
+      defaultBorderStyle, completeBorderStyle, activeBorderStyle, barHeight,
     } = this.props;
 
     return {
@@ -39,7 +40,9 @@ export default class Step extends Component {
         opacity: defaultOpacity,
         borderWidth: (defaultBorderColor ? 3 : 0),
         borderColor: defaultBorderColor,
-        borderStyle: defaultBorderStyle
+        borderStyle: defaultBorderStyle,
+        zIndex: 2,
+        position: 'relative',
       },
       activeCircle: {
         backgroundColor: activeColor,
@@ -47,6 +50,8 @@ export default class Step extends Component {
         borderWidth: (activeBorderColor ? 3 : 0),
         borderColor: activeBorderColor,
         borderStyle: activeBorderStyle,
+        zIndex: 2,
+        position: 'relative',
       },
       completedCircle: {
         backgroundColor: completeColor,
@@ -54,15 +59,17 @@ export default class Step extends Component {
         borderWidth: (completeBorderColor ? 3 : 0),
         borderColor: completeBorderColor,
         borderStyle: completeBorderStyle,
+        zIndex: 2,
+        position: 'relative',
       },
       index: {
-        lineHeight: `${size + circleFontSize / 4}px`,
-        color: circleFontColor
+        lineHeight: `${((size + circleFontSize) / 4)}px`,
+        color: circleFontColor,
       },
       title: {
         marginTop: titleTop,
         fontSize: titleFontSize,
-        fontWeight: '300',
+        fontWeight: '500',
         textAlign: 'center',
         display: 'block',
         color: defaultTitleColor,
@@ -81,7 +88,7 @@ export default class Step extends Component {
         top: circleTop + size / 2,
         height: 1,
         borderTopStyle: barStyle,
-        borderTopWidth: 1,
+        borderTopWidth: barHeight,
         borderTopColor: defaultBarColor,
         left: 0,
         right: '50%',
@@ -93,7 +100,7 @@ export default class Step extends Component {
         top: circleTop + size / 2,
         height: 1,
         borderTopStyle: barStyle,
-        borderTopWidth: 1,
+        borderTopWidth: barHeight,
         borderTopColor: defaultBarColor,
         right: 0,
         left: '50%',
@@ -102,7 +109,7 @@ export default class Step extends Component {
       },
       completedBar: {
         borderTopStyle: barStyle,
-        borderTopWidth: 1,
+        borderTopWidth: barHeight,
         borderTopColor: completeBarColor,
         opacity: completeOpacity,
       },
@@ -110,7 +117,7 @@ export default class Step extends Component {
   }
 
   render() {
-    const { title, index, active, completed, first, isLast, href, onClick } = this.props;
+    const { title, index, active, completed, first, isLast, href, onClick, showStepNumber } = this.props;
 
     const styles = this.getStyles();
     const circleStyle = Object.assign(
@@ -127,21 +134,25 @@ export default class Step extends Component {
     const rightStyle = Object.assign(styles.rightBar, completed ? styles.completedBar : {});
 
     return (
-      <div style={ styles.step }>
-        <div style={ circleStyle }>
-        {active || completed ? (
-          <a href={href} onClick={onClick} style={ styles.index }>{ index + 1 }</a>
-        ) : (
-          <span style={ styles.index }>{ index + 1 }</span>
-        )}
+      <div style={styles.step}>
+        <div
+          style={circleStyle}
+          onClick={active || completed ? () => onClick(index) : () => { }}
+          onMouseOver={active || completed ? () => onClick(index) : () => { }}
+        >
+          {active || completed ? (
+            <a href={href} style={styles.index}>{showStepNumber ? (index + 1) : ''}</a>
+          ) : (
+              <span style={styles.index}>{showStepNumber ? (index + 1) : ''}</span>
+            )}
         </div>
         {active || completed ? (
-          <a href={href} onClick={onClick} style={ titleStyle }>{ title }</a>
+          <a href={href} onClick={() => onClick(index)} style={titleStyle}>{title}</a>
         ) : (
-          <div style={ titleStyle }>{ title }</div>
-        )}
-        { !first && <div style={ leftStyle }></div> }
-        { !isLast && <div style={ rightStyle }></div> }
+            <div style={titleStyle}>{title}</div>
+          )}
+        {!first && <div style={leftStyle}></div>}
+        {!isLast && <div style={rightStyle}></div>}
       </div>
     );
   }
@@ -163,6 +174,8 @@ Step.defaultProps = {
   defaultBarColor: '#E0E0E0',
   barStyle: 'solid',
   borderStyle: 'solid',
+  showStepNumber: false,
+  barHeight: 1,
 };
 
 Step.propTypes = {
@@ -199,5 +212,7 @@ Step.propTypes = {
   activeBorderColor: PropTypes.string,
   defaultBorderStyle: PropTypes.string,
   completeBorderStyle: PropTypes.string,
-  activeBorderStyle: PropTypes.string
+  activeBorderStyle: PropTypes.string,
+  showStepNumber: PropTypes.bool,
+  barHeight: PropTypes.number,
 };
